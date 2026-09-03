@@ -1,0 +1,6 @@
+<section class="influence-manager">
+  <div class="toolbar"><button data-action="new"><i class="fas fa-plus"></i> New Encounter</button><button data-action="sample"><i class="fas fa-user-secret"></i> Create Lanekar Sample</button><button data-action="peace-sample"><i class="fas fa-people-group"></i> Create Peace Talks Sample</button><button data-action="import"><i class="fas fa-file-import"></i> Import Data</button></div>
+  <div class="encounter-list">
+    {{#each encounters}}<article class="encounter-row"><img src="{{image}}"><div><h3>{{name}}{{#if (eq status "paused")}} (Paused){{/if}}</h3><p>Level {{level}} · {{phases}} phases · {{npcs.length}} target(s)</p></div><div class="row-actions">{{#if (eq status "paused")}}<button data-action="resume" data-id="{{id}}">Resume</button>{{else}}{{#if (eq status "active")}}<button data-action="pause" data-id="{{id}}">Pause</button>{{else}}<button data-action="activate" data-id="{{id}}">Activate</button>{{/if}}{{/if}}<button data-action="edit" data-id="{{id}}">Edit</button><button data-action="export" data-id="{{id}}"><i class="fas fa-file-export"></i></button><button data-action="delete" data-id="{{id}}"><i class="fas fa-trash"></i></button></div></article>{{else}}<p>No encounters yet. Create a blank encounter or load a sample.</p>{{/each}}
+  </div>
+</section>

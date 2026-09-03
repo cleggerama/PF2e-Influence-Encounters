@@ -1,0 +1,109 @@
+<div class="influence-editor">
+  <nav class="tabs sheet-tabs" data-group="primary">
+    {{#each tabs}}<a class="item {{cssClass}}" data-action="tab" data-group="primary" data-tab="{{id}}"><i class="{{icon}}"></i> {{label}}</a>{{/each}}
+  </nav>
+  <section class="content">
+    <div class="tab {{tabs.basics.cssClass}}" data-group="primary" data-tab="basics">
+      <fieldset><legend>Presentation</legend>
+        <div class="form-group"><label>Encounter Name</label><div class="form-fields"><input type="text" name="name" value="{{encounter.name}}"></div></div>
+        <div class="form-group"><label>Encounter Image</label><div class="form-fields"><file-picker type="image" name="image" value="{{encounter.image}}"></file-picker></div></div>
+        <div class="form-group"><label>Cinematic Background</label><div class="form-fields"><file-picker type="image" name="backgroundImage" value="{{encounter.backgroundImage}}"></file-picker></div></div>
+        <div class="form-group"><label>Canvas Blur</label><div class="form-fields"><input type="number" min="0" max="20" name="backgroundBlur" value="{{encounter.backgroundBlur}}"></div></div>
+      </fieldset>
+      <fieldset><legend>Encounter Configuration</legend>
+        <div class="form-group"><label>Level</label><div class="form-fields"><input type="number" name="level" value="{{encounter.level}}"></div></div>
+        <div class="form-group"><label>Phases</label><div class="form-fields"><input type="number" min="1" name="phases" value="{{encounter.phases}}"></div></div>
+        <div class="form-group"><label>Show Exact Points to Players</label><div class="form-fields"><input type="checkbox" name="publicPoints" {{checked encounter.publicPoints}}></div></div>
+      </fieldset>
+      <fieldset><legend>Encounter Participants</legend>
+        <p class="hint">Party characters are selected by default. Choose them below or drag character Actors from the sidebar and Tokens from the canvas.</p>
+        <div class="actor-drop-zone" data-actor-drop="participant"><i class="fa-solid fa-user-plus"></i><strong>Drop participating PCs here</strong><span>Character Actors or Tokens</span></div>
+        {{#if characterActors.length}}<div class="participant-picker">{{#each characterActors}}<label class="checkbox participant-choice"><input type="checkbox" name="partyParticipant" value="{{id}}" {{checked selected}}><img src="{{image}}" alt=""> <span>{{name}}</span></label>{{/each}}</div>{{else}}<p class="hint">No character actors are available in this world.</p>{{/if}}
+      </fieldset>
+      <h2>Influence Targets</h2>
+      <p class="hint">Drag Actors from the sidebar or Tokens from the canvas to populate names and images. Background and Personality are GM-only; Appearance is shown to players.</p>
+      <div class="actor-drop-zone" data-actor-drop="npc"><i class="fa-solid fa-user-plus"></i><strong>Drop influence targets here</strong><span>Any Actor or Token</span></div>
+      {{#each encounter.npcs}}
+      <fieldset class="npc-editor-card"><legend>{{name}}{{#if actorId}} <i class="fa-solid fa-link" title="Linked to a Foundry Actor"></i>{{/if}}</legend>
+        <input type="hidden" name="npcs.{{@index}}.id" value="{{id}}"><input type="hidden" name="npcs.{{@index}}.actorId" value="{{actorId}}">
+        <div class="form-group"><label>Name</label><div class="form-fields"><input name="npcs.{{@index}}.name" value="{{name}}"></div></div>
+        <div class="form-group"><label>Portrait</label><div class="form-fields"><file-picker type="image" name="npcs.{{@index}}.image" value="{{image}}"></file-picker></div></div>
+        <div class="form-group"><label>Current IP</label><div class="form-fields"><input type="number" min="0" name="npcs.{{@index}}.points" value="{{points}}"></div></div>
+        <label>Background<textarea name="npcs.{{@index}}.background">{{background}}</textarea></label>
+        <label>Appearance<textarea name="npcs.{{@index}}.appearance">{{appearance}}</textarea></label>
+        <label>Personality<textarea name="npcs.{{@index}}.personality">{{personality}}</textarea></label>
+        <button type="button" data-action="remove" data-type="npc" data-index="{{@index}}"><i class="fas fa-trash"></i> Remove Target</button>
+      </fieldset>
+      {{/each}}
+      <button type="button" data-action="add" data-type="npc"><i class="fas fa-plus"></i> Add Influence Target</button>
+    </div>
+
+    <div class="tab {{tabs.skills.cssClass}}" data-group="primary" data-tab="skills">
+      <datalist id="influence-skill-choices">{{#each skillChoices}}<option value="{{this}}"></option>{{/each}}</datalist>
+      {{#each encounter.npcs}}
+      <fieldset class="npc-editor-card"><legend>{{name}}</legend>
+        <section class="source-parser"><h3>Import Published Encounter Text</h3><p class="hint">Paste this target's Background, Appearance, Personality, Discovery/Influence DCs, Influence thresholds and rewards, Resistances/Strengths, or Weaknesses. Only recognized sections are replaced. Parenthetical usage notes are ignored.</p><textarea data-parser-source="{{@index}}" placeholder="Background ... Appearance ... Personality ... Discovery DC 20 Art Lore, DC 26 Perception ... Influence DC 24 Diplomacy ... Influence 2 ... Resistances ..."></textarea><button type="button" data-action="parse" data-npc-index="{{@index}}"><i class="fa-solid fa-wand-magic-sparkles"></i> Parse Text for {{name}}</button></section>
+        <h3>Discovery Skills</h3>
+        <p class="hint">Perception and Diplomacy are the defaults. Choose a standard skill or type a Lore or homebrew skill; its PF2e slug updates automatically and remains editable.</p>
+        {{#each discovery}}<div class="skill-row"><input type="text" list="influence-skill-choices" data-skill-label name="npcs.{{@../index}}.discovery.{{@index}}.label" value="{{label}}" placeholder="Choose or type a skill"><input type="text" data-skill-slug name="npcs.{{@../index}}.discovery.{{@index}}.slug" value="{{slug}}" placeholder="PF2e slug"><input type="number" name="npcs.{{@../index}}.discovery.{{@index}}.dc" value="{{dc}}"><label><input type="checkbox" name="npcs.{{@../index}}.discovery.{{@index}}.secret" {{checked secret}}> Secret</label><input type="hidden" name="npcs.{{@../index}}.discovery.{{@index}}.id" value="{{id}}"><button type="button" data-action="remove" data-type="discovery:{{@../index}}" data-index="{{@index}}"><i class="fas fa-trash"></i></button></div>{{/each}}
+        <button type="button" data-action="add" data-type="discovery:{{@index}}"><i class="fas fa-plus"></i> Add Discovery Skill</button>
+        <h3>Influence Skills</h3>
+        {{#each influence}}<div class="skill-row"><input type="text" list="influence-skill-choices" data-skill-label name="npcs.{{@../index}}.influence.{{@index}}.label" value="{{label}}" placeholder="Choose or type a skill"><input type="text" data-skill-slug name="npcs.{{@../index}}.influence.{{@index}}.slug" value="{{slug}}" placeholder="PF2e slug"><input type="number" name="npcs.{{@../index}}.influence.{{@index}}.dc" value="{{dc}}"><label><input type="checkbox" name="npcs.{{@../index}}.influence.{{@index}}.lore" {{checked lore}}> Lore</label><input type="hidden" name="npcs.{{@../index}}.influence.{{@index}}.id" value="{{id}}"><button type="button" data-action="remove" data-type="influence:{{@../index}}" data-index="{{@index}}"><i class="fas fa-trash"></i></button></div>{{/each}}
+        <button type="button" data-action="add" data-type="influence:{{@index}}"><i class="fas fa-plus"></i> Add Influence Skill</button>
+      </fieldset>
+      {{/each}}
+    </div>
+
+    <div class="tab {{tabs.traits.cssClass}}" data-group="primary" data-tab="traits">
+      {{#each encounter.npcs}}
+      <fieldset class="npc-editor-card"><legend>{{name}}</legend>
+        <h3>Weakness</h3>
+        <div class="trait-grid"><input name="npcs.{{@index}}.weakness.label" value="{{weakness.label}}" placeholder="Label"><input type="number" name="npcs.{{@index}}.weakness.value" value="{{weakness.value}}"><select name="npcs.{{@index}}.weakness.mode">{{selectOptions @root.traitModes selected=weakness.mode}}</select><select name="npcs.{{@index}}.weakness.type">{{selectOptions @root.modifierTypes selected=weakness.type}}</select></div>
+        <textarea name="npcs.{{@index}}.weakness.description" placeholder="When this applies">{{weakness.description}}</textarea>
+        <h3>Resistance / Strength</h3>
+        <div class="trait-grid"><input name="npcs.{{@index}}.strength.label" value="{{strength.label}}" placeholder="Label"><input type="number" name="npcs.{{@index}}.strength.value" value="{{strength.value}}"><select name="npcs.{{@index}}.strength.mode">{{selectOptions @root.traitModes selected=strength.mode}}</select><select name="npcs.{{@index}}.strength.type">{{selectOptions @root.modifierTypes selected=strength.type}}</select></div>
+        <textarea name="npcs.{{@index}}.strength.description" placeholder="When this applies">{{strength.description}}</textarea>
+      </fieldset>
+      {{/each}}
+    </div>
+
+    <div class="tab {{tabs.results.cssClass}}" data-group="primary" data-tab="results">
+      <p class="hint">Narrative and item rewards are display text. Mechanical rewards can target any NPC, apply to rolls or DCs, be conditional, and have limited uses.</p>
+      {{#each encounter.npcs}}
+      <fieldset class="npc-editor-card"><legend>{{name}}</legend>
+        {{#each thresholds}}
+        <fieldset class="threshold-editor"><legend>{{label}} — {{points}} IP</legend>
+          <div class="form-group"><label>Threshold</label><input type="number" name="npcs.{{@../index}}.thresholds.{{@index}}.points" value="{{points}}"><label>Label</label><input name="npcs.{{@../index}}.thresholds.{{@index}}.label" value="{{label}}"></div>
+          <textarea name="npcs.{{@../index}}.thresholds.{{@index}}.text">{{text}}</textarea><input type="hidden" name="npcs.{{@../index}}.thresholds.{{@index}}.id" value="{{id}}">
+          <h4>Boons / Rewards</h4>
+          {{#each boons}}
+          <div class="reward-editor">
+            <input type="hidden" name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.id" value="{{id}}">
+            <div class="reward-grid">
+              <label>Kind<select name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.kind">{{selectOptions @root.rewardKinds selected=kind}}</select></label>
+              <label>Label<input name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.label" value="{{label}}"></label>
+              <label>Target<select name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.targetNpcId">{{selectOptions @root.npcTargets selected=targetNpcId}}</select></label>
+              <label>Activation<select name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.activation">{{selectOptions @root.rewardActivations selected=activation}}</select></label>
+              <label>Effect<select name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.mode">{{selectOptions @root.boonModes selected=mode}}</select></label>
+              <label>Scope<select name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.scope">{{selectOptions @root.boonScopes selected=scope}}</select></label>
+              <label>Value<input type="number" name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.value" value="{{value}}"></label>
+              <label>Modifier Type<select name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.type">{{selectOptions @root.modifierTypes selected=type}}</select></label>
+              <label>Uses (0 = display only)<input type="number" min="0" name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.uses" value="{{uses}}"></label>
+              <label>Skill slugs<input name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.skills" value="{{skills}}" placeholder="diplomacy,society"></label>
+            </div>
+            <label>Description<textarea name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.description">{{description}}</textarea></label>
+            <label class="checkbox"><input type="checkbox" name="npcs.{{@../../index}}.thresholds.{{@../index}}.boons.{{@index}}.playerVisible" {{checked playerVisible}}> Show this reward to players</label>
+            <button type="button" data-action="remove" data-type="boon:{{@../../index}}:{{@../index}}" data-index="{{@index}}"><i class="fas fa-trash"></i> Remove Reward</button>
+          </div>
+          {{/each}}
+          <button type="button" data-action="add" data-type="boon:{{@../index}}:{{@index}}"><i class="fas fa-plus"></i> Add Reward</button>
+          <button type="button" data-action="remove" data-type="threshold:{{@../index}}" data-index="{{@index}}"><i class="fas fa-trash"></i> Remove Threshold</button>
+        </fieldset>
+        {{/each}}
+        <button type="button" data-action="add" data-type="threshold:{{@index}}"><i class="fas fa-plus"></i> Add Threshold</button>
+      </fieldset>
+      {{/each}}
+    </div>
+  </section>
+  <footer class="form-footer"><button type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button></footer>
+</div>

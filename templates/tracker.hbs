@@ -1,0 +1,38 @@
+<section class="influence-tracker">
+  {{#if noEncounter}}
+    <p>No active influence encounter.</p>
+    {{#if isGM}}<button data-action="manage"><i class="fas fa-cog"></i> Manage Encounters</button>{{/if}}
+  {{else}}
+    <header class="encounter-header">
+      <img src="{{activeNpc.image}}" alt="{{activeNpc.name}}">
+      <div><h2>{{encounter.name}}{{#if isPaused}} (Paused){{/if}}</h2><p>{{activeNpc.name}} · Phase {{encounter.currentPhase}} of {{encounter.phases}}</p></div>
+      <div class="points">{{#if showPoints}}{{activeNpc.points}} IP{{else}}— IP{{/if}}</div>
+    </header>
+    <nav class="tracker-tabs tabs" data-group="tracker">
+      <a class="item" data-tab="encounter"><i class="fas fa-comments"></i> Encounter</a>
+      <a class="item" data-tab="log"><i class="fas fa-list"></i> Check Log</a>
+    </nav>
+    <div class="tracker-content">
+      <div class="tab" data-group="tracker" data-tab="encounter">
+        <h3>Influence Targets</h3>
+        <div class="npc-status-list">{{#each npcs}}<button type="button" data-action="select-npc" data-npc-id="{{id}}" class="npc-status-card {{#if active}}selected{{/if}}" title="Review {{name}} and target this NPC with the next check"><img src="{{image}}" alt=""><span><strong>{{name}}</strong>{{#if showPoints}}<small>{{points}} IP</small>{{/if}}</span></button>{{/each}}</div>
+        <section class="npc-profile">
+          <h3>{{activeNpc.name}}</h3>
+          {{#if activeNpc.appearance}}<p><strong>Appearance:</strong> {{activeNpc.appearance}}</p>{{/if}}
+          {{#if isGM}}{{#if activeNpc.background}}<p><strong>Background:</strong> {{activeNpc.background}}</p>{{/if}}{{#if activeNpc.personality}}<p><strong>Personality:</strong> {{activeNpc.personality}}</p>{{/if}}{{/if}}
+        </section>
+        {{#if isGM}}<div class="threshold-track">{{#each thresholds}}<div class="threshold {{#if unlocked}}unlocked{{/if}}"><strong>{{points}}</strong><span>{{label}}</span></div>{{/each}}</div>{{/if}}
+        <h3>Participants</h3>
+        <ul class="participant-roster">{{#each actors}}<li class="{{#if acted}}acted{{/if}}"><i class="fas {{#if acted}}fa-check-circle{{else}}fa-circle{{/if}}"></i> {{name}}{{#if acted}} <small>— acted</small>{{/if}}</li>{{/each}}</ul>
+        {{#if controlledActors.length}}<h4>Choose Your Acting PC</h4><div class="participants participant-actions">{{#each controlledActors}}<button type="button" data-action="select-participant" data-actor-id="{{id}}" class="participant {{#if acted}}acted{{/if}} {{#if selected}}selected{{/if}}" title="Use {{name}} for the next requested check" {{#if acted}}disabled{{/if}}><i class="fas {{#if acted}}fa-check{{else}}fa-user{{/if}}"></i> {{name}}</button>{{/each}}</div>{{else}}<p class="hint">You do not own any participating PCs.</p>{{/if}}
+        {{#if knownDiscoveries.length}}<section class="known-discoveries"><h3>Your Discoveries About {{activeNpc.name}}</h3><ul>{{#each knownDiscoveries}}<li>{{this}}</li>{{/each}}</ul></section>{{/if}}
+        {{#if canAct}}<div class="player-actions"><button data-action="request" data-type="discovery"><i class="fas fa-search"></i> Discovery</button><button data-action="request" data-type="influence"><i class="fas fa-comments"></i> Influence</button></div>{{/if}}
+        <div class="results">{{#each thresholds}}{{#if unlocked}}<article><h4>{{label}}</h4><p>{{text}}</p>{{#if boons.length}}<ul>{{#each boons}}<li><strong>{{label}}</strong>{{#if description}} — {{description}}{{/if}}{{#if @root.isGM}}{{#if (eq kind "ip")}} <button data-action="apply-reward" data-id="{{id}}" {{#if applied}}disabled{{/if}}>{{#if applied}}Applied{{else}}Apply IP{{/if}}</button>{{/if}}{{#if uses}} <small>({{remaining}} use(s) remaining)</small>{{/if}}{{/if}}</li>{{/each}}</ul>{{/if}}</article>{{/if}}{{/each}}</div>
+        {{#if isGM}}{{#if encounter.activeEffects.length}}<section class="active-effects"><h3>Custom Modifiers</h3>{{#each encounter.activeEffects}}<p>{{label}} {{value}} ({{type}}) <button data-action="remove-effect" data-id="{{id}}"><i class="fas fa-times"></i></button></p>{{/each}}</section>{{/if}}<footer>{{#if canPrior}}<button data-action="prior"><i class="fas fa-backward"></i> Prior Phase</button>{{/if}}{{#if canNext}}<button data-action="advance"><i class="fas fa-forward"></i> Next Phase</button>{{/if}}{{#if canPause}}<button data-action="reset-actions">Reset Actions</button><button data-action="change-ip" data-delta="-1"><i class="fas fa-minus"></i> 1 IP</button><button data-action="change-ip" data-delta="1"><i class="fas fa-plus"></i> 1 IP</button><button data-action="adjust">Set IP</button><button data-action="undo"><i class="fas fa-undo"></i> Undo</button>{{/if}}<button data-action="manage"><i class="fas fa-cog"></i> Manage</button>{{#if canPause}}<button class="pause-encounter" data-action="pause"><i class="fas fa-pause"></i> Pause</button><button class="end-encounter" data-action="end-encounter"><i class="fas fa-flag-checkered"></i> End & Publish</button>{{/if}}{{#if canResume}}<button class="resume-encounter" data-action="resume"><i class="fas fa-play"></i> Resume</button>{{/if}}</footer>{{/if}}
+      </div>
+      <div class="tab" data-group="tracker" data-tab="log">
+        {{#if checkLog.length}}<div class="check-log"><div class="check-log-header"><strong>PC</strong><strong>Target</strong><strong>Check</strong><strong>Skill</strong><strong>Outcome</strong></div>{{#each checkLog}}<div class="check-log-record"><div class="check-log-entry"><span>{{actorName}}</span><span>{{npcName}}</span><span>{{typeLabel}}</span><span>{{skillLabel}}</span><span>{{displayOutcome}}</span></div>{{#if details.length}}<div class="check-log-detail"><strong>{{detailLabel}}:</strong><ul>{{#each details}}<li>{{this}}</li>{{/each}}</ul></div>{{/if}}</div>{{/each}}</div>{{else}}<p class="hint empty-log">No checks have been completed.</p>{{/if}}
+      </div>
+    </div>
+  {{/if}}
+</section>

@@ -10,24 +10,29 @@ Paste this URL into Foundry's module installer or The Forge's Custom Module inst
 https://github.com/cleggerama/PF2e-Influence-Encounters/releases/latest/download/module.json
 ```
 
-## MVP features
+## Features
 
 - World-scoped encounter builder and reusable encounter records
-- Configurable phases, Discovery skills, Influence skills, weaknesses, strengths, and thresholds
+- Independent per-NPC Influence Points, Discovery and Influence skills, DCs, weaknesses, resistances, thresholds, and rewards
 - Player check requests with no written-response field
 - GM-only adjudication of weakness, strength, unlocked boons, DC adjustments, and custom modifiers
 - PF2e statistic rolls and degree-of-success scoring (`critical failure –1`, `failure 0`, `success +1`, `critical success +2`)
 - Per-player secret discoveries
-- Threshold rewards and configurable boon presets
+- Narrative and structured mechanical rewards, including cross-NPC modifiers, DC adjustments, limited uses, and IP changes
 - Participant action tracking, history, and undo
 - Cinematic canvas presentation showing the acting PC and active influence target
 - Foundry-style Influence directory with Create Encounter/Create Folder actions, name search, collapsible folders, and drag-and-drop organization
 - Right-click encounter actions for activation, duplication, deletion, and portable JSON import/export
-- Drag-and-drop NPC target roster with editable names and portraits
+- Actor and Token drag-and-drop for participating PCs and influence targets, preserving names and portraits
+- Player-private PC and NPC selections with Owner-level actor controls
+- Player and GM indicators showing who has acted in the current phase
+- Foundry file pickers for encounter, background, and NPC images
+- Per-NPC text parsing for Paizo-style Background, Appearance, Personality, skills, DCs, thresholds, rewards, Resistances/Strengths, and Weaknesses
+- Pause and Resume controls with fully preserved progress and `(Paused)` Journal labeling
 - Optional cinematic background image and configurable canvas blur
 - Automatically maintained Journal record; **End & Publish** makes the player-safe results and check log available to players
 - JSON export
-- Preconfigured Lanekar sample encounter
+- Preconfigured Lanekar and five-NPC Peace Talks sample encounters
 
 ## Installation
 
@@ -35,15 +40,15 @@ Copy the `influence-encounters` directory into Foundry's `Data/modules` director
 
 The module targets **Foundry VTT 14** (minimum build 365, verified through build 367) and requires **PF2e 8.0.0 or newer**.
 
-Version 0.1.6 uses Foundry v14's explicitly namespaced ApplicationV1 compatibility API while matching Foundry's selected application color scheme. Foundry supports these classes through v15; a later major release can migrate the windows to ApplicationV2 without changing stored encounter data.
+Version 0.2.0 uses Foundry v14's ApplicationV2 framework for the encounter editor and follows Foundry's Browser Default, Dark, and Light themes. Stored v0.1.x encounters are normalized when loaded.
 
 ## Use
 
 1. As GM, open the dedicated Influence sidebar or the Influence Encounter control in the scene controls.
 2. Choose **Manage Encounters**.
 3. Create a blank encounter or load the Lanekar sample.
-4. Edit and save the encounter, then activate it.
-5. Choose the acting PC and active NPC in the Influence sidebar, then request a Discovery or Influence check.
+4. Add PCs and NPCs from the Actor sidebar or canvas, configure each target manually or paste its published encounter text, then save and activate the encounter.
+5. Each player chooses an owned participating PC and an influence target, then requests a Discovery or Influence check.
 6. The active GM adjudicates all situational modifiers before the PF2e roll occurs.
 7. At the end, choose **End & Publish** to hide the cinematic presentation and grant players access to the encounter's Journal record.
 
@@ -54,9 +59,9 @@ game["influence-encounters"].open();
 game["influence-encounters"].manage();
 ```
 
-## Current MVP limitations
+## Current limitations
 
-- Multiple NPCs can be presented and selected, but they currently share one encounter-level set of Discovery and Influence statistics
 - One active GM handles roll requests
-- External boons are recorded but must be applied manually in later encounters
-- Import UI and cross-encounter automatic boon matching are reserved for the next iteration
+- Narrative or ambiguous rewards still require GM adjudication
+- Text parsing is intentionally best-effort and generated fields should be reviewed before saving
+- Nested folders and manual directory sorting are not yet implemented

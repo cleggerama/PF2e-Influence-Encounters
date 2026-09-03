@@ -2,17 +2,17 @@
   "id": "influence-encounters",
   "title": "Influence Encounters for PF2e",
   "description": "Run structured PF2e influence encounters with secret discoveries, GM-adjudicated modifiers, threshold boons, phases, history, and undo.",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "authors": [{ "name": "Cleggivey" }],
   "url": "https://github.com/cleggerama/PF2e-Influence-Encounters",
   "manifest": "https://github.com/cleggerama/PF2e-Influence-Encounters/releases/latest/download/module.json",
-  "download": "https://github.com/cleggerama/PF2e-Influence-Encounters/releases/download/v0.1.6/influence-encounters.zip",
+  "download": "https://github.com/cleggerama/PF2e-Influence-Encounters/releases/download/v0.2.0/influence-encounters.zip",
   "socket": true,
   "compatibility": { "minimum": "14.365", "verified": "14.367", "maximum": "14" },
   "relationships": {
     "systems": [{ "id": "pf2e", "type": "system", "compatibility": { "minimum": "8.0.0" } }]
   },
   "esmodules": ["scripts/influence-encounters.js"],
-  "styles": ["styles/influence-encounters.css", "styles/native-editor.css"],
+  "styles": ["styles/influence-encounters.css"],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }]
 }
